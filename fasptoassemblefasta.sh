@@ -64,4 +64,23 @@ for folder in "$mother_folder"/*; do
     fi
 done
 
+# Change the working directory to the contigs directory
+contigs_folder="$mother_folder/contigs"
+cd "$contigs_folder"
+
+#creating folder to keep the output of the annotated files
+prokka_directory="$mother_folder/prokka"
+mkdir $prokka_directory
+
+#running prokka for the contig files
+for sequence_file in ./*.fasta; do
+    filename="${sequence_file##*/}"  # Extract only the file name
+    filename="${filename%.fasta}"     # Remove the file extension
+    # Create a separate output directory for the current sequence
+    output_directory="$prokka_directory/$sequence_name"
+    mkdir -p "$output_directory"
+    # Run Prokka on the current multi-fasta contig file
+    prokka --outdir "$output_directory" --force --locustag "$filename" --prefix "$filename" "$sequence_file"
+done
+
 echo "Script execution completed."
